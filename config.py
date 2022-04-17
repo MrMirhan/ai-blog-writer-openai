@@ -1,7 +1,5 @@
 ##OPEN API STUFF
-OPENAI_API_KEY = 'api'
-
-
+OPENAI_API_KEY = 'apikey'
 
 ## FLASK STUFF
 class Config(object):

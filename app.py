@@ -35,16 +35,19 @@ def index():
                 Sections = blog.generateBlogSections(topic)
                 sections = [x.replace('-', '').lstrip() for x in Sections.split('\n') if x.startswith("-")]
                 topicdocument = []
+                y = 1
                 for section in sections:
+                    if len(section) < 6 or 'conclusion' in section.lower(): continue
                     Expanded = blog.blogSectionExpander(section)
-                    topicdocument.append(Expanded)
+                    topicdocument.append('\n- '+str(y)+'. '+section+'\n'+Expanded)
+                    y+=1
                 document = "\n".join(topicdocument)
                 title = topic
                 topic = str(topic.translate(str.maketrans('', '', string.punctuation))).lower()
                 topic = topic.replace(' ', '_')
                 tts = os.listdir('./documents/'+folder+'/')
                 if topic+'.txt' in tts: topic+="_"+str(int(datetime.now().timestamp()))
-                open('./documents/'+folder+'/'+topic+'.txt', 'a').write(title+document)
+                open('./documents/'+folder+'/'+topic+'.txt', 'a').write(title+'\n\n'+document)
                 print(topic, x,"/",len(topiclist))
                 x += 1
             blogTopicIdeas = f"{len(topiclist)} document is generated!"
