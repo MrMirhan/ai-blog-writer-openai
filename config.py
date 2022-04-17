@@ -1,5 +1,5 @@
 ##OPEN API STUFF
-OPENAI_API_KEY = 'enter-api-key'
+OPENAI_API_KEY = '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'
 
 
 

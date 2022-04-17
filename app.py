@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request
 import config
 import blog
-
+import string, os
+from datetime import datetime
 
 def page_not_found(e):
   return render_template('404.html'), 404
@@ -15,22 +16,38 @@ app.register_error_handler(404, page_not_found)
 
 @app.route('/', methods=["GET", "POST"])
 def index():
-
     if request.method == 'POST':
         if 'form1' in request.form:
             prompt = request.form['blogTopic']
             blogT = blog.generateBlogTopics(prompt)
-            blogTopicIdeas = blogT.replace('\n', '<br>')
-
-        if 'form2' in request.form:
-            prompt = request.form['blogSection']
-            blogT = blog.generateBlogSections(prompt)
-            blogSectionIdeas = blogT.replace('\n', '<br>')
-
-        if 'form3' in request.form:
-            prompt = request.form['blogExpander']
-            blogT = blog.blogSectionExpander(prompt)
-            blogExpanded = blogT.replace('\n', '<br>')
+            folder = str(int(datetime.now().timestamp()))
+            os.mkdir('./documents/'+folder)
+            topics = blogT.split('\n')
+            tlist = [x.split('.')[0] for x in topics]
+            topiclist = []
+            for topicstart in tlist:
+                topic = [x.replace(topicstart+'.', '').lstrip() for x in topics if x.startswith(topicstart)][0]
+                if len(topic) < 10: continue
+                topiclist.append(topic)
+            topiclist = [x for x in topiclist if not x == None or not x == "" or not x == "\n"]
+            x = 1
+            for topic in topiclist:
+                Sections = blog.generateBlogSections(topic)
+                sections = [x.replace('-', '').lstrip() for x in Sections.split('\n') if x.startswith("-")]
+                topicdocument = []
+                for section in sections:
+                    Expanded = blog.blogSectionExpander(section)
+                    topicdocument.append(Expanded)
+                document = "\n".join(topicdocument)
+                title = topic
+                topic = str(topic.translate(str.maketrans('', '', string.punctuation))).lower()
+                topic = topic.replace(' ', '_')
+                tts = os.listdir('./documents/'+folder+'/')
+                if topic+'.txt' in tts: topic+="_"+str(int(datetime.now().timestamp()))
+                open('./documents/'+folder+'/'+topic+'.txt', 'a').write(title+document)
+                print(topic, x,"/",len(topiclist))
+                x += 1
+            blogTopicIdeas = f"{len(topiclist)} document is generated!"
 
 
     return render_template('index.html', **locals())
