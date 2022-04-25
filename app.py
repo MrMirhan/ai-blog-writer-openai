@@ -16,6 +16,7 @@ app.register_error_handler(404, page_not_found)
 
 @app.route('/', methods=["GET", "POST"])
 def index():
+    docs = []
     if request.method == 'POST':
         if 'form1' in request.form:
             prompt = request.form['blogTopic']
@@ -47,12 +48,13 @@ def index():
                 topic = topic.replace(' ', '_')
                 tts = os.listdir('./documents/'+folder+'/')
                 if topic+'.txt' in tts: topic+="_"+str(int(datetime.now().timestamp()))
-                open('./documents/'+folder+'/'+topic+'.txt', 'a').write(title+'\n\n'+document)
+                doc = title+'\n\n'+document
+                docs.append({'title': title, 'doc': doc})
+                open('./documents/'+folder+'/'+topic+'.txt', 'a').write(doc)
                 print(topic, x,"/",len(topiclist))
                 x += 1
             blogTopicIdeas = f"{len(topiclist)} document is generated!"
-
-
+            documents = docs
     return render_template('index.html', **locals())
 
 

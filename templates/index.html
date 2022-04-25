@@ -45,9 +45,22 @@
 
       <br>
       <hr>
+
+      {% if documents %}
+          <h1>Generated Documents</h1>
+          <div>
+              {% for document in documents %}
+                  <label>{{document['title']}}</label><br/>
+                  <textarea rows="20" cols="50">
+                      {{ document['doc'] }}
+                  </textarea> <br />
+              {% endfor %}
+          </div>
+      {% endif %}
+
       <br>
 
-     
+      
 
 
     </div>
